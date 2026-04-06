@@ -1,101 +1,192 @@
+"use client";
+
+import Link from "next/link";
 import Image from "next/image";
+import EmailCapture from "@/components/EmailCapture";
+import { ArrowRight, ShoppingBag, Wind, Sparkles, Cigarette } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const categories = [
+    { name: "Premium Vapes", icon: <Wind size={32} />, href: "/shop?category=vapes", desc: "Top brands & flavors" },
+    { name: "CBD & Wellness", icon: <Sparkles size={32} />, href: "/shop?category=cbd", desc: "Tinctures, gummies & more" },
+    { name: "Glass & Accessories", icon: <ShoppingBag size={32} />, href: "/shop?category=accessories", desc: "Hand-blown pieces" },
+    { name: "Tobacco & Wraps", icon: <Cigarette size={32} />, href: "/shop?category=tobacco", desc: "Premium selections" },
+  ];
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const fadeInOffset = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const } }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen text-white">
+      
+      {/* Background Graphic Layers */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+         <Image 
+            src="/images/image1.png"
+            alt="Smoke Sketch 1"
+            fill
+            className="object-cover opacity-10 mix-blend-screen"
+            style={{ maskImage: "radial-gradient(ellipse at center, black 20%, transparent 60%)", WebkitMaskImage: "radial-gradient(ellipse at center, black 20%, transparent 60%)" }}
+         />
+      </div>
+
+      {/* Hero Section */}
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInOffset}
+        className="w-full relative flex flex-col items-center justify-center min-h-[90vh] px-4 text-center mt-[-80px] pt-20"
+      >
+        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center mt-12 sm:mt-0">
+          <div className="inline-block mb-6 px-4 py-1.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium text-xs uppercase tracking-widest rounded-full shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+            Fort Lauderdale's Premier Hub
+          </div>
+          <h1 className="text-6xl md:text-8xl lg:text-[140px] font-graffiti text-white mb-6 drop-shadow-[0_0_30px_rgba(255,255,255,0.3)] leading-[0.9]">
+            Elevate Your <br /> Experience
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mb-12 font-medium">
+            In-store shopping, fast local delivery, and convenient online ordering. Cloud954 — quality you can trust, right in your neighborhood.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
+            <Link 
+              href="/shop" 
+              className="bg-white text-black hover:bg-gray-200 px-8 py-5 rounded-full font-bold transition-all flex items-center justify-center tracking-widest uppercase shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-105"
+            >
+              Shop Online
+            </Link>
+            <a 
+              href="https://sauce.link/placeholder" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-black/50 backdrop-blur-md border border-gray-500 text-white hover:bg-gray-800 px-8 py-5 rounded-full font-bold transition-all flex items-center justify-center tracking-widest uppercase hover:scale-105"
+            >
+              Order Local Delivery <ArrowRight size={18} className="ml-2" />
+            </a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </motion.section>
+
+      {/* Featured Categories */}
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInOffset}
+        className="w-full py-20 relative z-10"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-6xl font-graffiti text-white mb-4">Shop By Category</h2>
+            <div className="w-24 h-1 bg-white mx-auto rounded"></div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categories.map((cat, i) => (
+              <motion.div whileHover={{ y: -10 }} key={i}>
+                <Link href={cat.href} className="group relative block h-64 overflow-hidden rounded-2xl bg-gradient-to-b from-white/10 to-white/5 border border-white/10 shadow-lg backdrop-blur-sm transition-all hover:border-white/30">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center z-20 p-6 text-center">
+                    <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center text-white mb-4 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] group-hover:scale-110 group-hover:bg-white group-hover:text-black transition-all duration-300">
+                      {cat.icon}
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2 tracking-wide uppercase">{cat.name}</h3>
+                    <p className="text-sm text-gray-400 font-medium">{cat.desc}</p>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Image Embed + About Strip */}
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInOffset}
+        className="w-full py-24 relative z-10 flex flex-col items-center bg-black/40 border-y border-white/5"
+      >
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center px-4">
+          <div className="relative h-[500px] w-full">
+            <Image 
+              src="/images/image2.png"
+              alt="Art integration"
+              fill
+              className="object-contain"
+            />
+          </div>
+          <div className="space-y-6">
+            <h2 className="text-5xl md:text-7xl font-graffiti text-white">More Than <br/> Just a Shop</h2>
+            <p className="text-xl text-gray-300 leading-relaxed font-light">
+              Established in Fort Lauderdale, Cloud954 has been serving the South Florida community for over 5 years. 
+              We carry the most sought-after premium brands, offer rapid local delivery, and ship nationwide to our extended family.
+            </p>
+            <Link 
+              href="/about" 
+              className="inline-flex py-3 text-white border-b border-white hover:text-gray-300 hover:border-gray-400 transition-colors font-bold tracking-widest uppercase text-sm"
+            >
+              Read Our Full Story
+            </Link>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Another bold visual strip */}
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInOffset}
+        className="w-full py-24 relative z-10 flex"
+      >
+        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 px-4">
+          <div className="w-full md:w-1/2 space-y-6 order-2 md:order-1">
+             <h2 className="text-5xl md:text-7xl font-graffiti text-white">The Cleanest <br/> Rotation</h2>
+             <p className="text-xl text-gray-300 leading-relaxed font-light">
+               We source exclusive products seamlessly to keep you a step ahead of the curve. Expect nothing but curated quality and authentic vibes.
+             </p>
+          </div>
+          <div className="relative h-[400px] w-full md:w-1/2 order-1 md:order-2 mix-blend-screen opacity-80">
+            <Image 
+              src="/images/image3.png"
+              alt="Feature layout"
+              fill
+              className="object-contain"
+            />
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Email Capture Section */}
+      <section className="w-full py-20 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl">
+          <EmailCapture isBanner={true} />
+          
+          {/* Subtle logo integration in corner */}
+          <div className="absolute top-4 right-6 opacity-20 w-32 h-32 pointer-events-none">
+             <Image src="/images/image1.png" alt="Overlay" fill className="object-contain" />
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom Store Info Strip */}
+      <section className="w-full bg-black/80 backdrop-blur-lg py-8 border-t border-white/10 relative z-20">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-around items-center text-gray-300 text-sm font-medium gap-4 tracking-widest uppercase">
+          <div className="flex items-center gap-3">
+            <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_#22c55e]"></span>
+            Open today until 10:00 PM
+          </div>
+          <div className="hidden md:block w-px h-4 bg-gray-600"></div>
+          <div>Placeholder Address, Fort Lauderdale, FL</div>
+          <div className="hidden md:block w-px h-4 bg-gray-600"></div>
+          <div>Call us: (954) 816-4669</div>
+        </div>
+      </section>
     </div>
   );
 }
