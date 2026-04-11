@@ -1,23 +1,33 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
+import { categories, products } from "./products";
 
 export default function ShopPage() {
-  // Array of 12 placeholder items. Client to use headless CMS in phase 2.
-  const placeholders = Array.from({ length: 12 }).map((_, i) => ({
-    id: i,
-    name: `Premium Product ${i + 1}`,
-    category: ["vapes", "cbd", "accessories", "tobacco"][i % 4],
-    price: (Math.random() * 50 + 10).toFixed(2),
-  }));
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [query, setQuery] = useState<string>("");
+
+  const visibleProducts = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return products.filter((p) => {
+      const matchesCat = activeCategory === "all" || p.category === activeCategory;
+      if (!matchesCat) return false;
+      if (!q) return true;
+      return (
+        p.name.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q)
+      );
+    });
+  }, [activeCategory, query]);
 
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.05
       }
     }
   };
@@ -27,6 +37,12 @@ export default function ShopPage() {
     show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } }
   };
 
+  const formatPrice = (n: number) =>
+    n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const activeCategoryName =
+    categories.find((c) => c.slug === activeCategory)?.name ?? "All";
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 min-h-screen text-white relative z-10">
       <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8 mt-10">
@@ -35,11 +51,13 @@ export default function ShopPage() {
           <div className="w-16 h-1 bg-white rounded mb-6 drop-shadow-[0_0_10px_white]"></div>
           <p className="text-gray-300 font-light text-lg">Browse our curated collection of premium products.</p>
         </div>
-        
+
         <div className="relative w-full md:w-auto text-white">
-          <input 
-            type="text" 
-            placeholder="Search products..." 
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search products..."
             className="w-full md:w-80 pl-12 pr-6 py-4 bg-black/50 border border-white/10 rounded-full focus:outline-none focus:ring-2 focus:ring-white focus:bg-black/80 transition-all font-light placeholder-gray-500 shadow-[0_0_15px_rgba(255,255,255,0.02)]"
           />
           <Search className="absolute left-4 top-4 text-gray-400" size={20} />
@@ -48,50 +66,86 @@ export default function ShopPage() {
 
       {/* Tabs */}
       <div className="flex overflow-x-auto pb-6 mb-12 gap-4 no-scrollbar">
-        {['All', 'Vapes', 'CBD', 'Accessories', 'Tobacco'].map((tab, i) => (
-          <button 
-            key={i}
-            className={`px-8 py-3 rounded-full whitespace-nowrap font-bold uppercase tracking-widest text-xs transition-all duration-300 shadow-lg ${
-              i === 0 
-                ? 'bg-white text-black drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]' 
-                : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/15 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+        {categories.map((tab) => {
+          const isActive = tab.slug === activeCategory;
+          return (
+            <button
+              key={tab.slug}
+              onClick={() => setActiveCategory(tab.slug)}
+              className={`px-8 py-3 rounded-full whitespace-nowrap font-bold uppercase tracking-widest text-xs transition-all duration-300 shadow-lg ${
+                isActive
+                  ? 'bg-white text-black drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]'
+                  : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/15 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]'
+              }`}
+            >
+              {tab.name}
+            </button>
+          );
+        })}
       </div>
 
       {/* Grid */}
-      <motion.div 
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-      >
-        {placeholders.map((p) => (
-          <motion.div variants={item} key={p.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden group hover:border-white/30 hover:-translate-y-2 transition-all duration-500 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-            <div className="aspect-[4/3] bg-black/40 relative flex items-center justify-center p-8 border-b border-white/5">
-              {/* Note: Placeholder image. Real images will replace this. */}
-              <div className="relative z-10 w-24 h-24 bg-white/5 rounded-full flex items-center justify-center text-gray-500 font-graffiti shadow-inner border border-white/10 group-hover:scale-110 group-hover:text-white transition-all duration-500">
-                Image
-              </div>
-              <div className="absolute top-4 left-4 px-3 py-1.5 bg-white text-black text-[10px] uppercase font-bold tracking-widest rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]">
-                {p.category}
-              </div>
-            </div>
-            
-            <div className="p-6">
-              <h3 className="font-bold text-lg text-white mb-2 tracking-wide group-hover:text-gray-300 transition-colors">{p.name}</h3>
-              <p className="text-xl font-light text-gray-400 mb-6">${p.price}</p>
-              
-              <button className="w-full py-3 bg-white/10 hover:bg-white text-white hover:text-black rounded-xl font-bold uppercase tracking-widest text-sm transition-all duration-300 shadow-md">
-                Add to Cart
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+      {visibleProducts.length === 0 ? (
+        <div className="text-center py-24 text-gray-400 font-light">
+          No products match your search.
+        </div>
+      ) : (
+        <motion.div
+          key={`${activeCategory}-${query}`}
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+        >
+          {visibleProducts.map((p) => {
+            const categoryLabel =
+              categories.find((c) => c.slug === p.category)?.name ?? p.category;
+            return (
+              <motion.div variants={item} key={p.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden group hover:border-white/30 hover:-translate-y-2 transition-all duration-500 shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col">
+                <div className="aspect-[4/3] bg-black/40 relative flex items-center justify-center p-8 border-b border-white/5">
+                  <div className="relative z-10 w-24 h-24 bg-white/5 rounded-full flex items-center justify-center text-gray-500 font-graffiti shadow-inner border border-white/10 group-hover:scale-110 group-hover:text-white transition-all duration-500">
+                    C954
+                  </div>
+                  <div className="absolute top-4 left-4 px-3 py-1.5 bg-white text-black text-[10px] uppercase font-bold tracking-widest rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)] max-w-[70%] truncate">
+                    {categoryLabel}
+                  </div>
+                  {!p.inStock && (
+                    <div className="absolute top-4 right-4 px-3 py-1.5 bg-black/80 border border-white/20 text-white text-[10px] uppercase font-bold tracking-widest rounded-full">
+                      Sold Out
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="font-bold text-lg text-white mb-2 tracking-wide group-hover:text-gray-300 transition-colors line-clamp-2">
+                    {p.name}
+                  </h3>
+                  {p.description && (
+                    <p className="text-sm text-gray-500 font-light mb-4 line-clamp-2">
+                      {p.description}
+                    </p>
+                  )}
+                  <p className="text-xl font-light text-gray-400 mb-6 mt-auto">
+                    ${formatPrice(p.price)}
+                  </p>
+
+                  <button
+                    disabled={!p.inStock}
+                    className="w-full py-3 bg-white/10 hover:bg-white text-white hover:text-black rounded-xl font-bold uppercase tracking-widest text-sm transition-all duration-300 shadow-md disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/10 disabled:hover:text-white"
+                  >
+                    {p.inStock ? "Add to Cart" : "Unavailable"}
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      )}
+
+      {/* Result count */}
+      <div className="mt-12 text-center text-gray-500 text-xs uppercase tracking-widest font-light">
+        Showing {visibleProducts.length} {activeCategoryName} product{visibleProducts.length === 1 ? "" : "s"}
+      </div>
     </div>
   );
 }
