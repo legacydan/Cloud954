@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
-import { categories, products } from "./products";
+import { categories, products, type Product } from "./products";
 
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -39,6 +40,11 @@ export default function ShopPage() {
 
   const formatPrice = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const priceLabel = (p: Product) => {
+    if (p.priceMin === p.priceMax) return `$${formatPrice(p.priceMin)}`;
+    return `$${formatPrice(p.priceMin)} – $${formatPrice(p.priceMax)}`;
+  };
 
   const activeCategoryName =
     categories.find((c) => c.slug === activeCategory)?.name ?? "All";
@@ -102,10 +108,23 @@ export default function ShopPage() {
               categories.find((c) => c.slug === p.category)?.name ?? p.category;
             return (
               <motion.div variants={item} key={p.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden group hover:border-white/30 hover:-translate-y-2 transition-all duration-500 shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col">
-                <div className="aspect-[4/3] bg-black/40 relative flex items-center justify-center p-8 border-b border-white/5">
-                  <div className="relative z-10 w-24 h-24 bg-white/5 rounded-full flex items-center justify-center text-gray-500 font-graffiti shadow-inner border border-white/10 group-hover:scale-110 group-hover:text-white transition-all duration-500">
-                    C954
-                  </div>
+                <div className="aspect-[4/3] bg-black/40 relative overflow-hidden border-b border-white/5">
+                  {p.imageUrl ? (
+                    <Image
+                      src={p.imageUrl}
+                      alt={p.name}
+                      fill
+                      sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-contain p-6 group-hover:scale-105 transition-transform duration-500"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center text-gray-500 font-graffiti shadow-inner border border-white/10 group-hover:scale-110 group-hover:text-white transition-all duration-500">
+                        C954
+                      </div>
+                    </div>
+                  )}
                   <div className="absolute top-4 left-4 px-3 py-1.5 bg-white text-black text-[10px] uppercase font-bold tracking-widest rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)] max-w-[70%] truncate">
                     {categoryLabel}
                   </div>
@@ -126,7 +145,7 @@ export default function ShopPage() {
                     </p>
                   )}
                   <p className="text-xl font-light text-gray-400 mb-6 mt-auto">
-                    ${formatPrice(p.price)}
+                    {priceLabel(p)}
                   </p>
 
                   <button
